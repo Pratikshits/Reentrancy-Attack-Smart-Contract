@@ -16,8 +16,8 @@ An attacker contract exploits this vulnerability by repeatedly calling the withd
 1. Deployed vulnerable contract
 2. Deposited 5 ETH
 3. Deployed attacker contract
-4. Executed attack with 1 ETH
-5. Observed attacker balance increase to 6 ETH
+4. Executed attack with 4 ETH
+5. Observed attacker balance increase to 10 ETH
 
 ## Result
 The attacker successfully drained funds due to recursive calls, demonstrating a reentrancy vulnerability.
